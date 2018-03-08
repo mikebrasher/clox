@@ -1,0 +1,1 @@
+﻿This is an implmentation of the in-progress book "[Crafting Interpreters][]".  This is the C implmementation for part 3: A Bytecode Virtual Machine, set up as a Visual Studio 2015 solution.
