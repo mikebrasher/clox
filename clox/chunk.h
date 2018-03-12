@@ -7,6 +7,7 @@
 typedef enum
 {
 	OP_CONSTANT,
+	OP_CONSTANT_LONG,
 	OP_RETURN,
 } OpCode;
 
@@ -14,6 +15,8 @@ typedef struct
 {
 	int count;
 	int capacity;
+	int lineCount;
+	int lineCapacity;
 	uint8_t* code;
 	int* lines;
 	ValueArray constants;
@@ -22,6 +25,8 @@ typedef struct
 void initChunk(Chunk* chunk);
 void freeChunk(Chunk* chunk);
 void writeChunk(Chunk* chunk, uint8_t byte, int line);
+int getLine(Chunk* chunk, int offset);
 int addConstant(Chunk* chunk, Value value);
+void writeConstant(Chunk* chunk, Value value, int line);
 
 #endif

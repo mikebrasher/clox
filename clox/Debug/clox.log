@@ -1,3 +1,3 @@
-﻿  chunk.c
-  clox.vcxproj -> F:\Git\craftinginterpreters\clox\Debug\clox.exe
-  clox.vcxproj -> F:\Git\craftinginterpreters\clox\Debug\clox.pdb (Full PDB)
+﻿  main.c
+  clox.vcxproj -> F:\Git\clox\Debug\clox.exe
+  clox.vcxproj -> F:\Git\clox\Debug\clox.pdb (Full PDB)
