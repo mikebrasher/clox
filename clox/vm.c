@@ -3,34 +3,51 @@
 #include "common.h"
 #include "debug.h"
 #include "vm.h"
+#include "memory.h"
 
 VM vm;
 
 static void resetStack()
 {
-	vm.stackTop = vm.stack;
+	//vm.stackTop = vm.stack;
+	vm.count = 0;
 }
 
 void initVM()
 {
+	vm.stack = NULL;
+	vm.capacity = 0;
 	resetStack();
 }
 
 void freeVM()
 {
-
+	FREE_ARRAY(Value, vm.stack, vm.capacity);
+	initVM();
 }
 
 void push(Value value)
 {
-	*vm.stackTop = value;
-	vm.stackTop++;
+	if (vm.capacity < vm.count + 1)
+	{
+		int oldCapacity = vm.capacity;
+		vm.capacity = GROW_CAPACITY(oldCapacity);
+		vm.stack = GROW_ARRAY(vm.stack, Value, oldCapacity, vm.capacity);
+		//vm.stackTop = &vm.stack[vm.count];
+	}
+
+	//*vm.stackTop = value;
+	//vm.stackTop++;
+	vm.stack[vm.count] = value;
+	vm.count++;
 }
 
 Value pop()
 {
-	vm.stackTop--;
-	return *vm.stackTop;
+	//vm.stackTop--;
+	//return  *vm.stackTop;
+	vm.count--;
+	return vm.stack[vm.count];
 }
 
 static InterpretResult run()
@@ -48,10 +65,11 @@ static InterpretResult run()
 	{
 #ifdef DEBUG_TRACE_EXECUTION
 		printf("          ");
-		for (Value* slot = vm.stack; slot < vm.stackTop; slot++)
+		//for (Value* slot = vm.stack; slot < vm.stackTop; slot++)
+		for (int islot = 0; islot < vm.count; islot++)
 		{
 			printf("[ ");
-			printValue(*slot);
+			printValue(vm.stack[islot]);
 			printf(" ]");
 		}
 		printf("\n");
