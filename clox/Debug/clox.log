@@ -1,8 +1,2 @@
-﻿  chunk.c
-  debug.c
-  main.c
-  memory.c
-  value.c
-  vm.c
-  Generating Code...
+﻿  scanner.c
   clox.vcxproj -> F:\Git\clox\Debug\clox.exe
