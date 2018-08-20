@@ -1,2 +1,12 @@
-﻿  compiler.c
+﻿  chunk.c
+  compiler.c
+f:\git\clox\clox\compiler.c(192): warning C4102: 'deafult': unreferenced label
+  debug.c
+  main.c
+  memory.c
+  scanner.c
+  value.c
+  vm.c
+  Generating Code...
+f:\git\clox\clox\value.c(16): warning C4715: 'valuesEqual': not all control paths return a value
   clox.vcxproj -> F:\Git\clox\Debug\clox.exe
