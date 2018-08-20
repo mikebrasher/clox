@@ -5,14 +5,20 @@
 
 bool valuesEqual(Value a, Value b)
 {
-	if (a.type != b.type) return false;
+	bool ret = false;
 
-	switch (a.type)
+	if (a.type == b.type)
 	{
-	case VAL_BOOL:   return AS_BOOL(a) == AS_BOOL(b);
-	case VAL_NIL:    return true;
-	case VAL_NUMBER: return AS_NUMBER(a) == AS_NUMBER(b);
+		switch (a.type)
+		{
+		case VAL_BOOL:   ret = AS_BOOL(a) == AS_BOOL(b); break;
+		case VAL_NIL:    ret = true; break;
+		case VAL_NUMBER: ret = AS_NUMBER(a) == AS_NUMBER(b); break;
+		default:         ret = false; break;
+		}
 	}
+
+	return ret;
 }
 
 void initValueArray(ValueArray* array)

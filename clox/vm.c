@@ -114,12 +114,22 @@ static InterpretResult run()
 			break;
 		}
 
+		case OP_NOT_EQUAL:
+		{
+			Value b = pop();
+			Value a = pop();
+			push(BOOL_VAL(!valuesEqual(a, b)));
+			break;
+		}
+
 		case OP_GREATER:  BINARY_OP(BOOL_VAL  , >); break;
+		case OP_GREATER_EQUAL: BINARY_OP(BOOL_VAL, >= ); break;
 		case OP_LESS:     BINARY_OP(BOOL_VAL  , <); break;
+		case OP_LESS_EQUAL: BINARY_OP(BOOL_VAL, <= ); break;
 		case OP_ADD:      BINARY_OP(NUMBER_VAL, +); break;
-		case OP_SUBTRACT: BINARY_OP(NUMBER_VAL, -); break;
+		//case OP_SUBTRACT: BINARY_OP(NUMBER_VAL, -); break;
 		case OP_MULTIPLY: BINARY_OP(NUMBER_VAL, *); break;
-		case OP_DIVIDE:   BINARY_OP(NUMBER_VAL, /); break;
+		//case OP_DIVIDE:   BINARY_OP(NUMBER_VAL, /); break;
 		case OP_NOT:
 			push(BOOL_VAL(isFalsey(pop())));
 			break;
@@ -131,6 +141,16 @@ static InterpretResult run()
 			}
 
 			push(NUMBER_VAL(-AS_NUMBER(pop())));
+			break;
+
+		case OP_INVERT:
+			if (!IS_NUMBER(peek(0)))
+			{
+				runtimeError("Operand must be a number.");
+				return INTERPRET_RUNTIME_ERROR;
+			}
+
+			push(NUMBER_VAL(1.0 / AS_NUMBER(pop())));
 			break;
 
 		case OP_RETURN:
