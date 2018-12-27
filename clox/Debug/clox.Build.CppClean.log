@@ -8,8 +8,10 @@ f:\git\clox\clox\debug\main.obj
 f:\git\clox\clox\debug\debug.obj
 f:\git\clox\clox\debug\compiler.obj
 f:\git\clox\clox\debug\chunk.obj
-f:\git\clox\debug\clox.ilk
+f:\git\clox\clox\debug\object.obj
+f:\git\clox\clox\debug\table.obj
 f:\git\clox\debug\clox.exe
+f:\git\clox\debug\clox.ilk
 f:\git\clox\debug\clox.pdb
 f:\git\clox\clox\debug\clox.tlog\cl.command.1.tlog
 f:\git\clox\clox\debug\clox.tlog\cl.read.1.tlog
