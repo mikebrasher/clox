@@ -21,7 +21,7 @@ void freeTable(Table* table)
 	initTable(table);
 }
 
-static Entry* findEntry(Entry* entries, int capacity, ObjString* key)
+static Entry* findEntry(Entry* entries, int capacity, Value* key)
 {
 	uint32_t index = key->hash % capacity;
 	Entry* tombstone = NULL;
@@ -79,7 +79,7 @@ static void adjustCapacity(Table* table, int capacity)
 	table->capacity = capacity;
 }
 
-bool tableGet(Table* table, ObjString* key, Value* value)
+bool tableGet(Table* table, Value* key, Value* value)
 {
 	if (table->entries == NULL) return false;
 
@@ -90,7 +90,7 @@ bool tableGet(Table* table, ObjString* key, Value* value)
 	return true;
 }
 
-bool tableSet(Table* table, ObjString* key, Value value)
+bool tableSet(Table* table, Value* key, Value value)
 {
 	if (table->count + 1 > table->capacity * TABLE_MAX_LOAD)
 	{
@@ -107,7 +107,7 @@ bool tableSet(Table* table, ObjString* key, Value value)
 	return isNewKey;
 }
 
-bool tableDelete(Table* table, ObjString* key)
+bool tableDelete(Table* table, Value* key)
 {
 	if (table->count == 0) return false;
 
@@ -116,7 +116,7 @@ bool tableDelete(Table* table, ObjString* key)
 	if (entry->key == NULL) return false;
 
 	// Place the tombstone in the entry
-	entry->key == NULL;
+	entry->key = NULL;
 	entry->value = BOOL_VAL(true);
 
 	return true;
@@ -146,13 +146,19 @@ ObjString* tableFindString(Table* table, const char* chars, int length, uint32_t
 	for (;;)
 	{
 		Entry* entry = &table->entries[index];
-
+		
 		if (entry->key == NULL) return NULL;
-		if (entry->key->length == length &&
-			memcmp(entry->key->chars, chars, length) == 0)
+
+		if (IS_STRING(*entry->key))
 		{
-			// we found it
-			return entry->key;
+			ObjString* str = AS_STRING(*entry->key);
+
+			if (str->length == length &&
+				memcmp(str->chars, chars, length) == 0)
+			{
+				// we found it
+				return str;
+			}
 		}
 
 		// try the next slot

@@ -17,6 +17,7 @@ typedef enum
 typedef struct
 {
 	ValueType type;
+	uint32_t hash;
 	union
 	{
 		bool boolean;
@@ -34,10 +35,10 @@ typedef struct
 #define AS_NUMBER(value) ((value).as.number )
 #define AS_OBJ(value)    ((value).as.obj    )
 
-#define BOOL_VAL(value)   ((Value){ VAL_BOOL  , { .boolean = value        } })
-#define NIL_VAL           ((Value){ VAL_NIL   , { .number  = 0            } })
-#define NUMBER_VAL(value) ((Value){ VAL_NUMBER, { .number  = value        } })
-#define OBJ_VAL(object)   ((Value){ VAL_OBJ   , { .obj     = (Obj*)object } })
+#define BOOL_VAL(value)    ((Value){ VAL_BOOL  , hashBoolean(value), { .boolean = value        } })
+#define NIL_VAL            ((Value){ VAL_NIL   , hashNumber(0)     , { .number  = 0            } })
+#define NUMBER_VAL(value)  ((Value){ VAL_NUMBER, hashNumber(value) , { .number  = value        } })
+#define OBJ_VAL(object)    ((Value){ VAL_OBJ   , hashObject((Obj*)object), { .obj     = (Obj*)object } })
 
 typedef struct
 {

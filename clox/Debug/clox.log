@@ -6,7 +6,6 @@
   object.c
   scanner.c
   table.c
-f:\git\clox\clox\table.c(119): warning C4553: '==': operator has no effect; did you intend '='?
   value.c
   vm.c
   Generating Code...
