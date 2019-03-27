@@ -1,6 +1,8 @@
 ﻿  chunk.c
   compiler.c
+f:\git\clox\clox\compiler.c(276): warning C4013: 'resolveLocal' undefined; assuming extern returning int
   debug.c
+f:\git\clox\clox\debug.c(43): warning C4013: 'byteInstruction' undefined; assuming extern returning int
   main.c
   memory.c
   object.c
