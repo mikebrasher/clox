@@ -245,8 +245,27 @@ Token scanToken()
 		return makeToken(match('=') ? TOKEN_LESS_EQUAL : TOKEN_LESS);
 	case '>':
 		return makeToken(match('=') ? TOKEN_GREATER_EQUAL : TOKEN_GREATER);
-
 	case '"': return string();
+	case '&':
+		if (match('&'))
+		{
+			return makeToken(TOKEN_AND);
+		}
+		else
+		{
+			return errorToken("Unexpected character after '&'.  Did you mean '&&'?");
+		}
+		break;
+	case '|':
+		if (match('|'))
+		{
+			return makeToken(TOKEN_OR);
+		}
+		else
+		{
+			return errorToken("Unexpected character after '|'.  Did you mean '||'?");
+		}
+		break;
 	}
 
 	return errorToken("Unexpected character.");
