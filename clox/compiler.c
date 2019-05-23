@@ -46,11 +46,18 @@ typedef struct
 {
 	Token name;
 	int depth;
+	bool fixed;
 } Local;
 
 typedef struct Compiler
 {
 	Local locals[UINT8_COUNT];
+	// To avoid linear search, could add a table with the
+	// token name as a key, and the index into locals as the value
+	// but the types are wrong (Token vs ObjString, and int vs NUMBER_VAL)
+	// and would need a different table for each scope
+	// or you could add the scope to the name, i.e. foo_scope1, foo_scope2, etc.
+	// definitely seems simpler to just do the linear search
 	int localCount;
 	int scopeDepth;
 } Compiler;
@@ -273,11 +280,22 @@ static void string(bool canAssign)
 static void namedVariable(Token name, bool canAssign)
 {
 	uint8_t getOp, setOp;
+	bool fixed = false;
 	int arg = resolveLocal(current, &name);
 	if (arg != -1)
 	{
-		getOp = OP_GET_LOCAL;
-		setOp = OP_SET_LOCAL;
+		if (arg < UINT8_COUNT)
+		{
+			getOp = OP_GET_LOCAL;
+			setOp = OP_SET_LOCAL;
+		}
+		else
+		{
+			getOp = OP_GET_LOCAL2;
+			setOp = OP_SET_LOCAL2;
+		}
+
+		fixed = current->locals[arg].fixed;
 	}
 	else
 	{
@@ -288,6 +306,7 @@ static void namedVariable(Token name, bool canAssign)
 
 	if (canAssign && match(TOKEN_EQUAL))
 	{
+		if (fixed) error("Cannot assign to a fixed value.");
 		expression();
 		emitBytes(setOp, (uint8_t)arg);
 	}
@@ -419,9 +438,9 @@ static int resolveLocal(Compiler* compiler, Token* name)
 	return -1;
 }
 
-static void addLocal(Token name)
+static void addLocal(Token name, bool fixed)
 {
-	if (current->localCount == UINT8_COUNT)
+	if (current->localCount == 2 * UINT8_COUNT)
 	{
 		error("Too many local variables in function.");
 		return;
@@ -430,9 +449,10 @@ static void addLocal(Token name)
 	Local* local = &current->locals[current->localCount++];
 	local->name = name;
 	local->depth = -1;
+	local->fixed = fixed;
 }
 
-static void declareVariable()
+static void declareVariable(bool fixed)
 {
 	// Global variables are implicitly declared.
 	if (current->scopeDepth == 0) return;
@@ -448,14 +468,14 @@ static void declareVariable()
 		}
 	}
 
-	addLocal(*name);
+	addLocal(*name, fixed);
 }
 
-static uint8_t parseVariable(const char* errorMessage)
+static uint8_t parseVariable(const char* errorMessage, bool fixed)
 {
 	consume(TOKEN_IDENTIFIER, errorMessage);
 
-	declareVariable();
+	declareVariable(fixed);
 	if (current->scopeDepth > 0) return 0;
 
 	return identifierConstant(&parser.previous);
@@ -498,9 +518,9 @@ static void block()
 	consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
 }
 
-static void varDeclaration()
+static void varDeclaration(bool fixed)
 {
-	uint8_t global = parseVariable("Expect variable name.");
+	uint8_t global = parseVariable("Expect variable name.", fixed);
 
 	if (match(TOKEN_EQUAL))
 	{
@@ -542,6 +562,7 @@ static void synchronize()
 		case TOKEN_CLASS:
 		case TOKEN_FUN:
 		case TOKEN_VAR:
+		case TOKEN_FIXED:
 		case TOKEN_FOR:
 		case TOKEN_IF:
 		case TOKEN_WHILE:
@@ -562,7 +583,11 @@ static void declaration()
 {
 	if (match(TOKEN_VAR))
 	{
-		varDeclaration();
+		varDeclaration(false);
+	}
+	else if (match(TOKEN_FIXED))
+	{
+		varDeclaration(true);
 	}
 	else
 	{
