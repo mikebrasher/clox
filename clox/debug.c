@@ -38,7 +38,7 @@ int disassembleInstruction(Chunk* chunk, int offset)
 	case OP_FALSE:
 		return simpleInstruction("OP_FALSE", offset);
 	case OP_POP:
-		return simpleInstruction("POP_POP", offset);
+		return simpleInstruction("OP_POP", offset);
 	case OP_GET_LOCAL:
 		return byteInstruction("OP_GET_LOCAL", chunk, offset);
 	case OP_SET_LOCAL:
@@ -75,6 +75,8 @@ int disassembleInstruction(Chunk* chunk, int offset)
 		return jumpInstruction("OP_JUMP_IF_FALSE", 1, chunk, offset);
 	case OP_LOOP:
 		return jumpInstruction("OP_LOOP", -1, chunk, offset);
+	case OP_CALL:
+		return byteInstruction("OP_CALL", chunk, offset);
 	case OP_RETURN:
 		return simpleInstruction("OP_RETURN", offset);
 	default:
