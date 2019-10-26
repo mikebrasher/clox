@@ -6,7 +6,6 @@
   object.c
   scanner.c
   table.c
-F:\Git\clox\clox\table.c(119): warning C4553: '==': result of expression not used; did you intend '='?
   value.c
   vm.c
   Generating Code...
